@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock, Paper, Scissors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body * {
+            padding: 0;
+            margin: 0;
+            /* border: 1px solid red; */
+        }
+
+        body {
+            font-family: 'Roboto Slab', serif;
+            font-size: 40px;
+            font-weight: 400;
+
+            height: 98vh;
+
+            background-color: #eed;
+            color: #333;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .top-section {
+            font-size: 60px;
+        }
+
+        .container {
+            display: flex;
+            border-top: #333 2px solid;
+            border-bottom: #333 2px solid;
+        }
+
+        .box {
+            width: 400px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+
+            font-size: 20px;
+        }
+
+        .left {
+            border-right: #333 1px solid;
+        }
+
+        .right {
+            border-left: #333 1px solid;
+        }
+
+        .opt,
+        .answer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.4rem;
+
+            opacity: 100%;
+        }
+
+        .opt-hover {
+            transform: scale(1.1);
+        }
+
+        .button {
+            width: 130px;
+            height: 40px;
+            font-family: 'Roboto Slab', serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: black;
+            background-color: #eee;
+            position: absolute;
+            margin-top: 210px;
+            border: #444 solid 1px;
+            border-radius: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+        }
+
+        .answer {
+            position: absolute;
+            opacity: 0;
+            transform: scale(1.3);
+        }
+
+        .bottom-section {
+            text-align: center;
+            font-size: 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            height: 2.5em;
+        }
+
+        /* ******* Shapes ******* */
+
+        .circle {
+            width: 75px;
+            height: 75px;
+            background-color: #333;
+            border-radius: 50%;
+        }
+
+        .square {
+            width: 75px;
+            height: 75px;
+            background-color: brown;
+        }
+
+        .up-arrow {
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 76px solid green;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            height: 50px;
+            background-color: #333;
+            color: #aaa;
+            width: 100%;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-section">Rock, Paper, Scissors!</div>
+    <div class="container">
+        <div class="box left">
+            <div class="opt rock">
+                <div class="circle"></div>
+                <p>Rock</p>
+            </div>
+            <div class="opt paper">
+                <div class="square"></div>
+                <p>Paper</p>
+            </div>
+            <div class="opt scissors">
+                <div class="up-arrow"></div>
+                <p>Scissors</p>
+            </div>
+            <button class="button start-button">Start</button>
+            <div class="answer">
+                <div></div>
+                <p></p>
+            </div>
+        </div>
+        <div class="box right">
+            <div class="opt">
+
+            </div>
+        </div>
+    </div>
+    <div class="bottom-section">
+        <p>Welcome! <br>Click "Start" to begin playing...</p>
+        <!-- <div class="button">Start!</div> -->
+    </div>
+    <footer>
+        <p>Made by Teder-kedr</p>
+    </footer>
+
+    <script>
+        //Игра начинается
+        //Убрать кнопку
+        //Поменять текст внизу
+        //Добавить анимацию фигурам
+        //Отобразить знак вопроса в окне AI
+        //Получить ход AI
+        //Получить ход игрока
+        //Показать фигуру игрока по центру левого окна
+        //Показать фигуру AI в правом окне
+        //Сравнить ходы
+        //Изменить счёт (если нужно)
+        //Изменить текст внизу
+        //Показать кнопку 'Again?'
+        //Repeat
+
+        const startButton = document.querySelector('.start-button');
+        const opts = document.querySelectorAll('.left .opt');
+        const answer = document.querySelector('.answer');
+        const aiopt = document.querySelector('.right .opt');
+        const questionMarkHTML = `
+        <p style='font-size: 80px; transform: translateY(-10px);'>?</p>
+        `;
+        const aiAnswerHTML = `
+        <div></div>
+        <p></p>
+        `;
+        const scoreboard = document.querySelector('.top-section');
+        const bottomSectionP = document.querySelector('.bottom-section p');
+        const messages = {
+            win: "<b>You won!</b><br>Click 'Again' to continue...",
+            lose: "<b>You lost!</b><br>Click 'Again' to continue...",
+            tie: "<b>It's a tie!</b><br>Click 'Again' to continue...",
+            choose: "Choose your option...",
+        };
+
+
+        let score = [0, 0];
+        let roundCounter = 0;
+
+        startButton.addEventListener('click', playRound);
+
+        function keepPlaying() {
+            playRound();
+        }
+
+        function playRound() {
+            startButton.removeEventListener('click', playRound);
+            scoreboard.textContent = `${score[0]} - ${score[1]}`;
+            aiopt.innerHTML = questionMarkHTML;
+            answer.innerHTML = `
+            <div></div>
+            <p></p>
+            `;
+            answer.style = "opacity: 0;"
+            opts.forEach(opt => {
+                opt.style = "opacity: 100%;";
+                opt.classList.remove('opt-hover');
+            });
+            startButton.style.opacity = 0;
+            bottomSectionP.innerHTML = messages.choose;
+
+            let playerChoice = '';
+            let aiChoice = '';
+            let againToggle;
+
+            //текст внизу
+            opts.forEach(opt => {
+                opt.addEventListener('mouseenter', addHoverClass);
+                opt.addEventListener('mouseleave', removeHoverClass);
+            });
+
+            opts.forEach(opt => {
+                opt.addEventListener('click', getPlayerChoice);
+            });
+
+            function getPlayerChoice() {
+                opts.forEach(opt => {
+                    opt.removeEventListener('mouseenter', addHoverClass);
+                    opt.removeEventListener('mouseleave', removeHoverClass);
+                });
+                function showAnswer() {
+                    answer.style = "opacity: 100%;";
+                    opts.forEach(opt => {
+                        opt.style = 'opacity: 0;';
+                        opt.removeEventListener('click', getPlayerChoice);
+                    });
+                }
+
+                if (this.classList.contains('rock')) {
+                    playerChoice = 'rock';
+                    answer.querySelector('div').classList.add('circle');
+                    answer.querySelector('p').textContent = 'Rock';
+                    showAnswer();
+                } else if (this.classList.contains('paper')) {
+                    playerChoice = 'paper';
+                    answer.querySelector('div').classList.add('square');
+                    answer.querySelector('p').textContent = 'Paper';
+                    showAnswer();
+                } else if (this.classList.contains('scissors')) {
+                    playerChoice = 'scissors';
+                    answer.querySelector('div').classList.add('up-arrow');
+                    answer.querySelector('p').textContent = 'Scissors';
+                    showAnswer();
+                }
+                getAiChoice();
+            }
+
+            function getAiChoice() {
+                function showAnswer() {
+                    aiopt.style = "transform: scale(1.3);";
+                }
+                const theOptions = ['rock', 'paper', 'scissors'];
+                let randomIndex = Math.floor(Math.random() * theOptions.length);
+                aiChoice = theOptions[randomIndex];
+                if (aiChoice === 'rock') {
+                    aiopt.innerHTML = aiAnswerHTML;
+                    aiopt.querySelector('div').classList.add('circle');
+                    aiopt.querySelector('p').textContent = 'Rock';
+                    showAnswer();
+                } else if (aiChoice === 'paper') {
+                    aiopt.innerHTML = aiAnswerHTML;
+                    aiopt.querySelector('div').classList.add('square');
+                    aiopt.querySelector('p').textContent = 'Paper';
+                    showAnswer();
+                } else if (aiChoice === 'scissors') {
+                    aiopt.innerHTML = aiAnswerHTML;
+                    aiopt.querySelector('div').classList.add('up-arrow');
+                    aiopt.querySelector('p').textContent = 'Scissors';
+                    showAnswer();
+                }
+                // console.log(computeResult());
+                changeScore(showAgainButton);
+            }
+
+            function computeResult() {
+                if (aiChoice === playerChoice) {
+                    return 'tie'
+                }
+                if (playerChoice === 'rock' && aiChoice === 'scissors'
+                    || playerChoice === 'paper' && aiChoice === 'rock'
+                    || playerChoice === 'scissors' && aiChoice === 'paper') {
+                    return 'win'
+                } else if (playerChoice === 'rock' && aiChoice === 'paper'
+                    || playerChoice === 'paper' && aiChoice === 'scissors'
+                    || playerChoice === 'scissors' && aiChoice === 'rock') {
+                    return 'lose'
+                }
+            }
+
+            function changeScore(callback) {
+                let x = computeResult();
+                if (x === 'win') {
+                    bottomSectionP.innerHTML = messages.win;
+                    score[0] += 1;
+                } else if (x === 'lose') {
+                    bottomSectionP.innerHTML = messages.lose;
+                    score[1] += 1;
+                } else {
+                    bottomSectionP.innerHTML = messages.tie;
+                }
+                callback();
+            }
+
+            function showAgainButton() {
+                scoreboard.textContent = `${score[0]} - ${score[1]}`;
+                startButton.textContent = 'Again?';
+                startButton.style.opacity = 1;
+                startButton.addEventListener('click', testAgain);
+            }
+
+            function testAgain() {
+                againToggle = true;
+                if (againToggle) {
+                    startButton.removeEventListener('click', testAgain);
+                    roundCounter++;
+                    return keepPlaying();
+                }
+            }
+
+            function addHoverClass() {
+                this.classList.add('opt-hover');
+            }
+
+            function removeHoverClass() {
+                this.classList.remove('opt-hover');
+            }
+        }
+
+    </script>
+</body>
+
+</html>
